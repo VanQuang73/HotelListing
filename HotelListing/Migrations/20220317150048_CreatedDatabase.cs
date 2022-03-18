@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HotelListing.Migrations
 {
-    public partial class AddCreatedDatabase : Migration
+    public partial class CreatedDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -195,8 +195,8 @@ namespace HotelListing.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "be59878d-432a-4cac-9c9f-02b5a9248f3d", "93224862-a6e2-4fb4-8850-3febe7fa01e8", "User", "USER" },
-                    { "832e8452-0ec8-4cb5-b73f-e17682cbe8e9", "6fb67a3d-b7a2-4731-bf07-eaf56e772f4f", "Administrator", "ADMINISTRATOR" }
+                    { "3ccdf136-1830-4620-9d60-64b002616caf", "034bada2-b053-4728-b0f0-fc444c1455ca", "User", "USER" },
+                    { "0213f858-4554-4ba4-bb4a-d1dc6a392a51", "da72e168-7946-4da4-8e70-8df4a4ca3bca", "Administrator", "ADMINISTRATOR" }
                 });
 
             migrationBuilder.InsertData(

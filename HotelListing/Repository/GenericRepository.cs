@@ -1,11 +1,14 @@
 ﻿using HotelListing.Data;
 using HotelListing.IRepository;
+using HotelListing.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace HotelListing.Repository
 {
@@ -31,15 +34,12 @@ namespace HotelListing.Repository
             _db.RemoveRange(entities);
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes = null)
+        public async Task<T> Get(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = _db;
-            if (includes != null)
+            if (include != null)
             {
-                foreach (var includePropery in includes)
-                {
-                    query = query.Include(includePropery);
-                }
+                query = include(query);
             }
 
             return await query.AsNoTracking().FirstOrDefaultAsync(expression);
@@ -68,6 +68,20 @@ namespace HotelListing.Repository
             }
 
             return await query.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<X.PagedList.IPagedList<T>> GetPagedList(RequestParams requestParams, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        {
+            IQueryable<T> query = _db;
+
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.AsNoTracking()
+                .ToPagedListAsync(requestParams.PageNumber, requestParams.PageSize);
         }
 
         public async Task Insert(T entity)
