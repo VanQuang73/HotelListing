@@ -1,8 +1,9 @@
-using AspNetCoreRateLimit;
+﻿using AspNetCoreRateLimit;
 using AutoMapper;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
+using HotelListing.Mail;
 using HotelListing.Repository;
 using HotelListing.Services;
 using Microsoft.AspNetCore.Builder;
@@ -76,6 +77,21 @@ namespace HotelListing
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.ConfigureVersioning();
+
+            services.Configure<IdentityOptions>(options => {
+                options.User.RequireUniqueEmail = true;  // Email là duy nhất
+
+                // Cấu hình đăng nhập.
+                options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
+                options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+
+            });
+
+            services.AddOptions();                                        // Kích hoạt Options
+            var mailsettings = Configuration.GetSection("MailSettings");  // đọc config
+            services.Configure<MailSettings>(mailsettings);               // đăng ký để Inject
+
+            services.AddTransient<ISendMailService, SendMailService>();        // Đăng ký dịch vụ Mail
 
         }
 
