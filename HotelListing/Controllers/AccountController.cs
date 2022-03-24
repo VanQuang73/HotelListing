@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,6 +92,17 @@ namespace HotelListing.Controllers
             }
 
             return Accepted(new { Token = await _authManager.CreateToken() });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var result = await _authManager.Logout();
+            if(result)
+            {
+                return Ok("Đăng xuất thành công.");
+            }
+            return BadRequest("Đăng xuất thất bại.");
         }
 
         [HttpGet]

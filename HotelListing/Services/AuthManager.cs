@@ -1,5 +1,6 @@
 ﻿using HotelListing.Data;
 using HotelListing.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +19,16 @@ namespace HotelListing.Services
     {
         private readonly UserManager<ApiUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private ApiUser _user;
         public AuthManager(UserManager<ApiUser> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor
+            )
         {
             _userManager = userManager;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> CreateToken()
@@ -53,9 +59,10 @@ namespace HotelListing.Services
         private async Task<List<Claim>> GetClaims()
         {
             var claims = new List<Claim>
-             {
-                 new Claim(ClaimTypes.Name, _user.UserName)
-             };
+            {
+                new Claim(ClaimTypes.Name, _user.UserName),
+                new Claim("LoginFor", "Web")
+            };
 
             var roles = await _userManager.GetRolesAsync(_user);
 
@@ -80,6 +87,26 @@ namespace HotelListing.Services
             _user = await _userManager.FindByNameAsync(userDTO.Email);
             var validPassword = await _userManager.CheckPasswordAsync(_user, userDTO.Password);
             return (_user != null && validPassword);
+        }
+
+        public async Task<bool> Logout()
+        {
+            var identity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+
+            //Gets list of claims.
+            IEnumerable<Claim> claims = identity.Claims;
+
+            var usernameClaim = claims
+                .Where(x => x.Type == ClaimTypes.Name)
+                .FirstOrDefault();
+
+            var user = await _userManager.FindByNameAsync(usernameClaim.Value);
+            var result = await _userManager.RemoveAuthenticationTokenAsync(user, "Web", "Access");
+            if(result.Succeeded)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

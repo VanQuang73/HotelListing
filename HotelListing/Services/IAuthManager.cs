@@ -10,5 +10,6 @@ namespace HotelListing.Services
     {
         Task<bool> ValidateUser(LoginUserDTO userDTO);
         Task<string> CreateToken();
+        Task<bool> Logout();
     }
 }
