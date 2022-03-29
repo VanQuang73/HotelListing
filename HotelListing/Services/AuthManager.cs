@@ -1,7 +1,10 @@
-﻿using HotelListing.Data;
+﻿using AutoMapper;
+using HotelListing.Data;
+using HotelListing.Mail;
 using HotelListing.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -21,14 +24,20 @@ namespace HotelListing.Services
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private ApiUser _user;
+        private readonly IMapper _mapper;
+        private readonly ISendMailService _emailSender;
+
         public AuthManager(UserManager<ApiUser> userManager,
             IConfiguration configuration,
-            IHttpContextAccessor httpContextAccessor
-            )
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            ISendMailService emailSender)
         {
             _userManager = userManager;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
+            _emailSender = emailSender;
         }
 
         public async Task<string> CreateToken()
@@ -82,14 +91,70 @@ namespace HotelListing.Services
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        public async Task<bool> ValidateUser(LoginUserDTO userDTO)
+        public async Task<Repsonse> Register(UserDTO userDTO)
+        {
+            var user = _mapper.Map<ApiUser>(userDTO);
+            user.UserName = userDTO.Email;
+            var result = await _userManager.CreateAsync(user, userDTO.Password);
+
+            if (!result.Succeeded)
+            {
+                List<string> er = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    er.Add(error.Description);
+                }
+                return new Repsonse
+                {
+                    statusCode = false,
+                    message = "Đăng ký thất bại",
+                    developerMessage = er,
+                    data = null
+                };
+            }
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = string.Format($"/api/Account/ConfirmedEmail?id={user.Id}&code={code}");
+
+            await _emailSender.SendEmailAsync(userDTO.Email, "Xác nhận địa chỉ email",
+                        $"Hãy xác nhận địa chỉ email bằng cách <a href='{callbackUrl}'>Bấm vào đây</a>.");
+            await _userManager.AddToRolesAsync(user, userDTO.Roles);
+
+            return new Repsonse
+            {
+                statusCode = true,
+                message = "Đăng ký thành công",
+                developerMessage = null,
+                data = null
+            };
+        }
+
+        public async Task<Repsonse> Login(LoginUserDTO userDTO)
         {
             _user = await _userManager.FindByNameAsync(userDTO.Email);
             var validPassword = await _userManager.CheckPasswordAsync(_user, userDTO.Password);
-            return (_user != null && validPassword);
+            if (_user != null && validPassword)
+            {
+                return new Repsonse
+                {
+                    statusCode = true,
+                    message = "Đăng nhập thành công.",
+                    data = new
+                    {
+                        Token = await CreateToken()
+                    }
+                };
+            }
+            return new Repsonse
+            {
+                statusCode = false,
+                message = "Đăng nhập thất bại.",
+                developerMessage = new List<string> { "Tài khoản hoặc mật khẩu không chính xác." }
+            };
         }
 
-        public async Task<bool> Logout()
+        public async Task<Repsonse> Logout()
         {
             var identity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
 
@@ -104,9 +169,113 @@ namespace HotelListing.Services
             var result = await _userManager.RemoveAuthenticationTokenAsync(user, "Web", "Access");
             if(result.Succeeded)
             {
-                return true;
+                return new Repsonse { 
+                    statusCode = true,
+                    message = "Đăng xuất thành công."
+                };
             }
-            return false;
+            return new Repsonse
+            {
+                statusCode = true,
+                message = "Đăng xuất thất bại."
+            };
+        }
+
+        public async Task<Repsonse> ConfirmedEmail(Guid id, string key)
+        {
+            List<string> e = new List<string>();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(key));
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+
+                return new Repsonse { 
+                    statusCode = true,
+                    message = "Xác thực thành công."
+                };
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    e.Add(error.Description);
+                }
+                return new Repsonse
+                {
+                    statusCode = true,
+                    message = "Xác thực thất bại.",
+                    developerMessage = e
+                };
+            }
+        }
+
+        public async Task<Repsonse> ForgotPassword(string mail)
+        {
+            var user = await _userManager.FindByEmailAsync(mail);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                return new Repsonse { 
+                    statusCode = false,
+                    message = "Tài khoản không tồn tại hoặc chưa được mở khóa."
+                };
+            }
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = string.Format($"/api/Account/resetPassword?code={code}");
+            await _emailSender.SendEmailAsync(user.Email, "Đặt lại mật khẩu",
+                    $"Để đặt lại mật khẩu hãy <a href='{callbackUrl}'>bấm vào đây</a>.");
+            return new Repsonse {
+                statusCode = true,
+                message = "Vào mail để lấy link đặt lại mật khẩu."
+            };
+        }
+
+        public async Task<Repsonse> ResetPassword(string key, ResetPassword resetPassword)
+        {
+            if (key == null)
+            {
+                return new Repsonse
+                {
+                    statusCode = false,
+                    message = "Không có mã token."
+                };
+            }
+
+            var user = await _userManager.FindByEmailAsync(resetPassword.Email);
+            if (user == null)
+            {
+                // Không thấy user
+                return new Repsonse
+                {
+                    statusCode = false,
+                    message = "Tài khoản không tồn tại."
+                };
+            }
+            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(key));
+            var result = await _userManager.ResetPasswordAsync(user, code, resetPassword.Password);
+            List<string> e = new List<string>();
+            if (result.Succeeded)
+            {
+                return new Repsonse
+                {
+                    statusCode = true,
+                    message = "Đổi mật khẩu thành công."
+                };
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    e.Add(error.Description);
+                }
+            }
+            return new Repsonse
+            {
+                statusCode = false,
+                message = "Đổi mật khẩu thất bại.",
+                developerMessage = e
+            };
         }
     }
 }
