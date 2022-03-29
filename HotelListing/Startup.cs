@@ -1,9 +1,13 @@
 ﻿using AspNetCoreRateLimit;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Mail;
+using HotelListing.Models;
+using HotelListing.Models.Validation;
 using HotelListing.Repository;
 using HotelListing.Services;
 using Microsoft.AspNetCore.Builder;
@@ -68,6 +72,13 @@ namespace HotelListing
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();
+            //Validation
+            services.AddTransient<IValidator<UserDTO>, UserValidation>();
+            services.AddTransient<IValidator<ResetPassword>, ResetPasswordValidation>();
+            services.AddTransient<IValidator<HotelDTO>, HotelValidation>();
+            services.AddTransient<IValidator<CountryDTO>, CountryValidation>();
+            // Đăng ký dịch vụ Mail
+            services.AddTransient<ISendMailService, SendMailService>();        
 
             services.AddSwaggerGen(c =>
             {
@@ -76,7 +87,7 @@ namespace HotelListing
 
             services.AddControllers().AddNewtonsoftJson(op =>
                 op.SerializerSettings.ReferenceLoopHandling =
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore).AddFluentValidation();
 
             services.ConfigureVersioning();
 
@@ -92,9 +103,6 @@ namespace HotelListing
             services.AddOptions();                                        // Kích hoạt Options
             var mailsettings = Configuration.GetSection("MailSettings");  // đọc config
             services.Configure<MailSettings>(mailsettings);               // đăng ký để Inject
-
-            services.AddTransient<ISendMailService, SendMailService>();        // Đăng ký dịch vụ Mail
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
