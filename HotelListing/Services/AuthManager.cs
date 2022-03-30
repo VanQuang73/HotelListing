@@ -150,7 +150,7 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "400",
-                message = Resource.LOGOUT_FAIL,
+                message = Resource.LOGIN_FAIL,
                 developerMessage = new List<string> { "Tài khoản hoặc mật khẩu không chính xác." }
             };
         }
