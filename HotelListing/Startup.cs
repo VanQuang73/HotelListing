@@ -94,11 +94,19 @@ namespace HotelListing
             services.ConfigureVersioning();
 
             services.Configure<IdentityOptions>(options => {
+<<<<<<< HEAD
                 options.User.RequireUniqueEmail = true;
 
                 // Cấu hình đăng nhập.
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
+=======
+                options.User.RequireUniqueEmail = true; 
+
+                // Cấu hình đăng nhập.
+                options.SignIn.RequireConfirmedEmail = true;            
+                options.SignIn.RequireConfirmedPhoneNumber = false;     
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
 
             });
         }

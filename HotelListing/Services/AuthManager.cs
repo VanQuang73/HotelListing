@@ -108,7 +108,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "201",
+<<<<<<< HEAD
                     message = Resource.REGISTER_SUCCESS,
+=======
+                    message = "Đăng ký thất bại",
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                     developerMessage = error,
                     data = null
                 };
@@ -125,7 +129,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.REGISTER_FAIL,
+=======
+                message = "Đăng ký thành công",
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 developerMessage = null,
                 data = null
             };
@@ -140,7 +148,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "200",
+<<<<<<< HEAD
                     message = Resource.LOGIN_SUCCESS,
+=======
+                    message = Resources.LOGIN_SUCCESS,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                     data = new
                     {
                         Token = await CreateToken()
@@ -150,7 +162,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "400",
+<<<<<<< HEAD
                 message = Resource.LOGOUT_FAIL,
+=======
+                message = Resources.LOGIN_FAIL,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 developerMessage = new List<string> { "Tài khoản hoặc mật khẩu không chính xác." }
             };
         }
@@ -173,13 +189,21 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "200",
+<<<<<<< HEAD
                     message = Resource.LOGOUT_SUCCESS
+=======
+                    message = Resources.LOGOUT_SUCCESS
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
             return new Repsonse
             {
                 statusCode = "400",
+<<<<<<< HEAD
                 message = Resource.LOGOUT_FAIL
+=======
+                message = Resources.LOGOUT_FAIL
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
             };
         }
 
@@ -195,7 +219,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "200",
+<<<<<<< HEAD
                     message = Resource.COMFIRMED_SUCCESS
+=======
+                    message = Resources.COMFIRMED_SUCCESS
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
             else
@@ -207,7 +235,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.COMFIRMED_FAIL,
+=======
+                    message = Resources.COMFIRMED_FAIL,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                     developerMessage = e
                 };
             }
@@ -221,7 +253,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.FORGOT_PASSWORD_SUCCESS
+=======
+                    message = Resources.ACCOUNT_FAIL
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -232,7 +268,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.FORGOT_PASSWORD_SUCCESS
+=======
+                message = Resources.FORGOT_PASSWORD_SUCCESS
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
             };
         }
 
@@ -243,7 +283,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.NOT_TOKEN
+=======
+                    message = Resources.NOT_TOKEN
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
 
@@ -254,7 +298,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.NOT_ACCOUNT
+=======
+                    message = Resources.NOT_ACCOUNT
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(key));
@@ -265,7 +313,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "200",
+<<<<<<< HEAD
                     message = Resource.RESETPASSWORD_SUCCESS
+=======
+                    message = Resources.RESETPASSWORD_SUCCESS
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 };
             }
             else
@@ -278,7 +330,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "400",
+<<<<<<< HEAD
                 message = Resource.RESETPASSWORD_FAIL,
+=======
+                message = Resources.RESETPASSWORD_FAIL,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 developerMessage = e
             };
         }

@@ -31,7 +31,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "201",
+<<<<<<< HEAD
                 message = Resource.CREATE_SUCCESS,
+=======
+                message = Resources.CREATE_SUCCESS,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 data = new
                 {
                     id = country.Id,
@@ -49,7 +53,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.DELETE_FAIL,
+=======
+                    message = Resources.DELETE_FAIL,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                     developerMessage = "Dữ liệu không tồn tại."
                 };
             }
@@ -59,7 +67,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.DELETE_SUCCESS
+=======
+                message = Resources.DELETE_SUCCESS
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
             };
         }
 
@@ -70,7 +82,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.GET_SUCCESS,
+=======
+                message = Resources.GET_SUCCESS,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 data = results
             };
         }
@@ -82,7 +98,11 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.GET_SUCCESS,
+=======
+                message = Resources.GET_SUCCESS,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                 data = result
             };
         }
@@ -96,7 +116,11 @@ namespace HotelListing.Services
                 return new Repsonse
                 {
                     statusCode = "400",
+<<<<<<< HEAD
                     message = Resource.UPDATE_FAIL,
+=======
+                    message = Resources.UPDATE_FAIL,
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
                     developerMessage = "Dữ liệu không tồn tại."
                 };
             }
@@ -107,8 +131,16 @@ namespace HotelListing.Services
             return new Repsonse
             {
                 statusCode = "200",
+<<<<<<< HEAD
                 message = Resource.UPDATE_SUCCESS
             };
         }
     }
 }
+=======
+                message = Resources.UPDATE_SUCCESS
+            };
+        }
+    }
+}
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5

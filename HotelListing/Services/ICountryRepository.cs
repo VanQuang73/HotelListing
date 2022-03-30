@@ -11,4 +11,8 @@ namespace HotelListing.Services
         Task<Repsonse> UpdateCountry(int id, UpdateCountryDTO countryDTO);
         Task<Repsonse> DeleteCountry(int id);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
