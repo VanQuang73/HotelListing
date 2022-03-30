@@ -13,11 +13,7 @@ namespace HotelListing.Controllers
     {
         private readonly IHotelRepository _hotelRepository;
 
-<<<<<<< HEAD
         public HotelController(IHotelRepository hotelRepository)
-=======
-        public HotelController( IHotelRepository hotelRepository)
->>>>>>> 881f55d69d73c13c17f841d8655250a445ed83b5
         {
             _hotelRepository = hotelRepository;
         }
