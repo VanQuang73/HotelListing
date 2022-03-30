@@ -71,14 +71,16 @@ namespace HotelListing
 
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IHotelRepository, HotelRepository>();
+            services.AddTransient<ICountryRepository, CountryRepository>();
             services.AddScoped<IAuthManager, AuthManager>();
             //Validation
-            services.AddTransient<IValidator<UserDTO>, UserValidation>();
-            services.AddTransient<IValidator<ResetPassword>, ResetPasswordValidation>();
-            services.AddTransient<IValidator<HotelDTO>, HotelValidation>();
-            services.AddTransient<IValidator<CountryDTO>, CountryValidation>();
+            services.ConfigureValidation();
             // Đăng ký dịch vụ Mail
-            services.AddTransient<ISendMailService, SendMailService>();        
+            services.AddOptions();
+            var mailsettings = Configuration.GetSection("MailSettings");
+            services.Configure<MailSettings>(mailsettings);
+            services.AddTransient<ISendMailService, SendMailService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -92,17 +94,13 @@ namespace HotelListing
             services.ConfigureVersioning();
 
             services.Configure<IdentityOptions>(options => {
-                options.User.RequireUniqueEmail = true;  // Email là duy nhất
+                options.User.RequireUniqueEmail = true; 
 
                 // Cấu hình đăng nhập.
-                options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-                options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+                options.SignIn.RequireConfirmedEmail = true;            
+                options.SignIn.RequireConfirmedPhoneNumber = false;     
 
             });
-
-            services.AddOptions();                                        // Kích hoạt Options
-            var mailsettings = Configuration.GetSection("MailSettings");  // đọc config
-            services.Configure<MailSettings>(mailsettings);               // đăng ký để Inject
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

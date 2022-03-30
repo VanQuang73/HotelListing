@@ -26,7 +26,7 @@ namespace HotelListing.Models.Validation
                 .Length<ResetPassword>(6, 200).WithMessage("Mật khẩu lớn hơn 6 và nhỏ hơn 200 ký tự.");
             RuleFor(x => x).Custom((request, context) =>
             {
-                if(request.Password != request.ConfirmPassword)
+                if (request.Password != request.ConfirmPassword)
                 {
                     context.AddFailure("Mật khẩu chưa khớp.");
                 }

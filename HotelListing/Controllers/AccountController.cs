@@ -29,11 +29,6 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
-            _logger.LogInformation($"Registration Attempt for {userDTO.Email} ");
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             object result = await _authManager.Register(userDTO);
             return Ok(result);
