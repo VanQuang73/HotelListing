@@ -1,15 +1,8 @@
-﻿using AutoMapper;
-using HotelListing.Data;
-using HotelListing.IRepository;
-using HotelListing.Models;
+﻿using HotelListing.Models;
+using HotelListing.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelListing.Controllers
@@ -18,16 +11,11 @@ namespace HotelListing.Controllers
     [ApiController]
     public class HotelController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<HotelController> _logger;
-        private readonly IMapper _mapper;
+        private readonly IHotelRepository _hotelRepository;
 
-        public HotelController(IUnitOfWork unitOfWork, ILogger<HotelController> logger,
-            IMapper mapper)
+        public HotelController(IHotelRepository hotelRepository)
         {
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-            _mapper = mapper;
+            _hotelRepository = hotelRepository;
         }
 
         [HttpGet]
@@ -35,8 +23,7 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetHotels([FromQuery] RequestParams requestParams)
         {
-            var hotels = await _unitOfWork.Hotels.GetPagedList(requestParams);
-            var results = _mapper.Map<IList<HotelDTO>>(hotels);
+            var results = await _hotelRepository.GetHotels(requestParams);
             return Ok(results);
         }
 
@@ -45,8 +32,7 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetHotel(int id)
         {
-            var country = await _unitOfWork.Countries.Get(q => q.Id == id, include: q => q.Include(x => x.Hotels));
-            var result = _mapper.Map<CountryDTO>(country);
+            var result = await _hotelRepository.GetHotel(id);
             return Ok(result);
         }
 
@@ -57,70 +43,30 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateHotel([FromBody] CreateHotelDTO hotelDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError($"Invalid POST attempt in {nameof(CreateHotel)}");
-                return BadRequest(ModelState);
-            }
-
-            var hotel = _mapper.Map<Hotel>(hotelDTO);
-            await _unitOfWork.Hotels.Insert(hotel);
-            await _unitOfWork.Save();
-
-            return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
+            var result = await _hotelRepository.CreateHotel(hotelDTO);
+            return Ok(result);
         }
 
         [Authorize]
-        [HttpPut("{id:int}")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateHotel(int id, [FromBody] UpdateHotelDTO hotelDTO)
+        public async Task<IActionResult> UpdateHotel([FromQuery] int id, [FromBody] UpdateHotelDTO hotelDTO)
         {
-            if (!ModelState.IsValid || id < 1)
-            {
-                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateHotel)}");
-                return BadRequest(ModelState);
-            }
-
-            var hotel = await _unitOfWork.Hotels.Get(q => q.Id == id);
-            if (hotel == null)
-            {
-                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateHotel)}");
-                return BadRequest("Submitted data is invalid");
-            }
-
-            _mapper.Map(hotelDTO, hotel);
-            _unitOfWork.Hotels.Update(hotel);
-            await _unitOfWork.Save();
-
-            return NoContent();
+            var result = await _hotelRepository.UpdateHotel(id, hotelDTO);
+            return Ok(result);
         }
 
         [Authorize]
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteHotel(int id)
+        public async Task<IActionResult> DeleteHotel([FromQuery] int id)
         {
-            if (id < 1)
-            {
-                _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteHotel)}");
-                return BadRequest();
-            }
-
-            var hotel = await _unitOfWork.Hotels.Get(q => q.Id == id);
-            if (hotel == null)
-            {
-                _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteHotel)}");
-                return BadRequest("Submitted data is invalid");
-            }
-
-            await _unitOfWork.Hotels.Delete(id);
-            await _unitOfWork.Save();
-
-            return NoContent();
+            var result = await _hotelRepository.DeleteHotel(id);
+            return Ok(result);
         }
     }
 }
