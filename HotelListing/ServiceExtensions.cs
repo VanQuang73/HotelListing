@@ -1,6 +1,9 @@
 ﻿using AspNetCoreRateLimit;
+using FluentValidation;
 using HotelListing.Data;
+using HotelListing.Mail;
 using HotelListing.Models;
+using HotelListing.Models.Validation;
 using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -123,6 +126,14 @@ namespace HotelListing
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        }
+
+        public static void ConfigureValidation(this IServiceCollection services)
+        {
+            services.AddTransient<IValidator<UserDTO>, UserValidation>();
+            services.AddTransient<IValidator<ResetPassword>, ResetPasswordValidation>();
+            services.AddTransient<IValidator<HotelDTO>, HotelValidation>();
+            services.AddTransient<IValidator<CountryDTO>, CountryValidation>();
         }
     }
 }

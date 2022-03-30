@@ -2,6 +2,7 @@
 using HotelListing.Data;
 using HotelListing.Mail;
 using HotelListing.Models;
+using HotelListing.Properties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -99,16 +100,16 @@ namespace HotelListing.Services
 
             if (!result.Succeeded)
             {
-                List<string> er = new List<string>();
-                foreach (var error in result.Errors)
+                List<string> error = new List<string>();
+                foreach (var e in result.Errors)
                 {
-                    er.Add(error.Description);
+                    error.Add(e.Description);
                 }
                 return new Repsonse
                 {
-                    statusCode = false,
+                    statusCode = "201",
                     message = "Đăng ký thất bại",
-                    developerMessage = er,
+                    developerMessage = error,
                     data = null
                 };
             }
@@ -123,7 +124,7 @@ namespace HotelListing.Services
 
             return new Repsonse
             {
-                statusCode = true,
+                statusCode = "200",
                 message = "Đăng ký thành công",
                 developerMessage = null,
                 data = null
@@ -138,8 +139,8 @@ namespace HotelListing.Services
             {
                 return new Repsonse
                 {
-                    statusCode = true,
-                    message = "Đăng nhập thành công.",
+                    statusCode = "200",
+                    message = Resources.LOGIN_SUCCESS,
                     data = new
                     {
                         Token = await CreateToken()
@@ -148,8 +149,8 @@ namespace HotelListing.Services
             }
             return new Repsonse
             {
-                statusCode = false,
-                message = "Đăng nhập thất bại.",
+                statusCode = "400",
+                message = Resources.LOGIN_FAIL,
                 developerMessage = new List<string> { "Tài khoản hoặc mật khẩu không chính xác." }
             };
         }
@@ -167,17 +168,18 @@ namespace HotelListing.Services
 
             var user = await _userManager.FindByNameAsync(usernameClaim.Value);
             var result = await _userManager.RemoveAuthenticationTokenAsync(user, "Web", "Access");
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
-                return new Repsonse { 
-                    statusCode = true,
-                    message = "Đăng xuất thành công."
+                return new Repsonse
+                {
+                    statusCode = "200",
+                    message = Resources.LOGOUT_SUCCESS
                 };
             }
             return new Repsonse
             {
-                statusCode = true,
-                message = "Đăng xuất thất bại."
+                statusCode = "400",
+                message = Resources.LOGOUT_FAIL
             };
         }
 
@@ -190,9 +192,10 @@ namespace HotelListing.Services
             if (result.Succeeded)
             {
 
-                return new Repsonse { 
-                    statusCode = true,
-                    message = "Xác thực thành công."
+                return new Repsonse
+                {
+                    statusCode = "200",
+                    message = Resources.COMFIRMED_SUCCESS
                 };
             }
             else
@@ -203,8 +206,8 @@ namespace HotelListing.Services
                 }
                 return new Repsonse
                 {
-                    statusCode = true,
-                    message = "Xác thực thất bại.",
+                    statusCode = "400",
+                    message = Resources.COMFIRMED_FAIL,
                     developerMessage = e
                 };
             }
@@ -215,9 +218,10 @@ namespace HotelListing.Services
             var user = await _userManager.FindByEmailAsync(mail);
             if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
             {
-                return new Repsonse { 
-                    statusCode = false,
-                    message = "Tài khoản không tồn tại hoặc chưa được mở khóa."
+                return new Repsonse
+                {
+                    statusCode = "400",
+                    message = Resources.ACCOUNT_FAIL
                 };
             }
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -225,9 +229,10 @@ namespace HotelListing.Services
             var callbackUrl = string.Format($"/api/Account/resetPassword?code={code}");
             await _emailSender.SendEmailAsync(user.Email, "Đặt lại mật khẩu",
                     $"Để đặt lại mật khẩu hãy <a href='{callbackUrl}'>bấm vào đây</a>.");
-            return new Repsonse {
-                statusCode = true,
-                message = "Vào mail để lấy link đặt lại mật khẩu."
+            return new Repsonse
+            {
+                statusCode = "200",
+                message = Resources.FORGOT_PASSWORD_SUCCESS
             };
         }
 
@@ -237,8 +242,8 @@ namespace HotelListing.Services
             {
                 return new Repsonse
                 {
-                    statusCode = false,
-                    message = "Không có mã token."
+                    statusCode = "400",
+                    message = Resources.NOT_TOKEN
                 };
             }
 
@@ -248,8 +253,8 @@ namespace HotelListing.Services
                 // Không thấy user
                 return new Repsonse
                 {
-                    statusCode = false,
-                    message = "Tài khoản không tồn tại."
+                    statusCode = "400",
+                    message = Resources.NOT_ACCOUNT
                 };
             }
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(key));
@@ -259,8 +264,8 @@ namespace HotelListing.Services
             {
                 return new Repsonse
                 {
-                    statusCode = true,
-                    message = "Đổi mật khẩu thành công."
+                    statusCode = "200",
+                    message = Resources.RESETPASSWORD_SUCCESS
                 };
             }
             else
@@ -272,8 +277,8 @@ namespace HotelListing.Services
             }
             return new Repsonse
             {
-                statusCode = false,
-                message = "Đổi mật khẩu thất bại.",
+                statusCode = "400",
+                message = Resources.RESETPASSWORD_FAIL,
                 developerMessage = e
             };
         }
