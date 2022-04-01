@@ -23,92 +23,64 @@ namespace HotelListing.Services
             _logger = logger;
             _mapper = mapper;
         }
-        public async Task<Repsonse> CreateCountry(CreateCountryDTO countryDTO)
+        public async Task<object> CreateCountry(CreateCountryDTO countryDTO)
         {
             var country = _mapper.Map<Country>(countryDTO);
             await _unitOfWork.Countries.Insert(country);
             await _unitOfWork.Save();
-            return new Repsonse
+            return new
             {
-                statusCode = "201",
-                message = Resource.CREATE_SUCCESS,
-                data = new
-                {
-                    id = country.Id,
-                    country
-                }
+                id = country.Id,
+                country
             };
         }
 
-        public async Task<Repsonse> DeleteCountry(int id)
+        public async Task<string> DeleteCountry(int id)
         {
             var country = await _unitOfWork.Countries.Get(q => q.Id == id);
             if (country == null || id < 1)
             {
                 _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteCountry)}");
-                return new Repsonse
-                {
-                    statusCode = "400",
-                    message = Resource.DELETE_FAIL,
-                    developerMessage = "Dữ liệu không tồn tại."
-                };
+                throw new BusinessException(Resource.NOT_DATA);
             }
 
             await _unitOfWork.Countries.Delete(id);
             await _unitOfWork.Save();
-            return new Repsonse
-            {
-                statusCode = "200",
-                message = Resource.DELETE_SUCCESS
-            };
+            return Resource.DELETE_SUCCESS;
         }
 
-        public async Task<Repsonse> GetCountries(RequestParams requestParams)
+        public async Task<object> GetCountries(RequestParams requestParams)
         {
             var countries = await _unitOfWork.Countries.GetPagedList(requestParams);
             var results = _mapper.Map<IList<CountryDTO>>(countries);
-            return new Repsonse
+            return new
             {
-                statusCode = "200",
-                message = Resource.GET_SUCCESS,
-                data = results
+                results
             };
         }
 
-        public async Task<Repsonse> GetCountry(int id)
+        public async Task<object> GetCountry(int id)
         {
             var country = await _unitOfWork.Countries.Get(q => q.Id == id, include: q => q.Include(x => x.Hotels));
             var result = _mapper.Map<CountryDTO>(country);
-            return new Repsonse
+            return new
             {
-                statusCode = "200",
-                message = Resource.GET_SUCCESS,
-                data = result
+                result
             };
         }
 
-        public async Task<Repsonse> UpdateCountry(int id, UpdateCountryDTO countryDTO)
+        public async Task<string> UpdateCountry(int id, UpdateCountryDTO countryDTO)
         {
             var country = await _unitOfWork.Countries.Get(q => q.Id == id);
             if (country == null)
             {
-                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateCountry)}");
-                return new Repsonse
-                {
-                    statusCode = "400",
-                    message = Resource.UPDATE_FAIL,
-                    developerMessage = "Dữ liệu không tồn tại."
-                };
+                throw new BusinessException(Resource.NOT_DATA);
             }
 
             _mapper.Map(countryDTO, country);
             _unitOfWork.Countries.Update(country);
             await _unitOfWork.Save();
-            return new Repsonse
-            {
-                statusCode = "200",
-                message = Resource.UPDATE_SUCCESS
-            };
+            return Resource.UPDATE_SUCCESS;
         }
     }
 }

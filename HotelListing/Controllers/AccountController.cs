@@ -1,8 +1,8 @@
 ﻿using HotelListing.Models;
+using HotelListing.Properties;
 using HotelListing.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -12,13 +12,10 @@ namespace HotelListing.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly ILogger<AccountController> _logger;
         private readonly IAuthManager _authManager;
 
-        public AccountController(ILogger<AccountController> logger,
-            IAuthManager authManager)
+        public AccountController(IAuthManager authManager)
         {
-            _logger = logger;
             _authManager = authManager;
         }
 
@@ -29,25 +26,23 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
-
-            object result = await _authManager.Register(userDTO);
-            return Ok(result);
+            var result = await _authManager.Register(userDTO);
+            return Ok(new Repsonse(Resource.REGISTER_SUCCESS));
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
         {
-            _logger.LogInformation($"Login Attempt for {userDTO.Email} ");
             var result = await _authManager.Login(userDTO);
-            return Ok(result);
+            return Ok(new Repsonse(Resource.LOGIN_SUCCESS, null, new {Token = result}));
         }
 
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             var result = await _authManager.Logout();
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
 
         [HttpGet]
@@ -55,7 +50,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> ConfirmedEmail(Guid id, string code)
         {
             var result = await _authManager.ConfirmedEmail(id, code);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
 
         [HttpPost]
@@ -63,7 +58,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> ForgotPassword(string mail)
         {
             var result = await _authManager.ForgotPassword(mail);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
 
         [HttpPost]
@@ -71,7 +66,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> ResetPassword([FromQuery] string code, [FromBody] ResetPassword resetPassword)
         {
             var result = await _authManager.ResetPassword(code, resetPassword);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
     }
 }

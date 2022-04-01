@@ -5,11 +5,11 @@ namespace HotelListing.Services
 {
     public interface IHotelRepository
     {
-        Task<Repsonse> GetHotels(RequestParams requestParams);
-        Task<Repsonse> GetHotel(int id);
-        Task<Repsonse> CreateHotel(CreateHotelDTO hotelDTO);
-        Task<Repsonse> UpdateHotel(int id, UpdateHotelDTO hotelDTO);
-        Task<Repsonse> DeleteHotel(int id);
+        Task<object> GetHotels(RequestParams requestParams);
+        Task<object> GetHotel(int id);
+        Task<object> CreateHotel(CreateHotelDTO hotelDTO);
+        Task<string> UpdateHotel(int id, UpdateHotelDTO hotelDTO);
+        Task<string> DeleteHotel(int id);
 
     }
 }

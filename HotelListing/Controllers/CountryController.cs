@@ -1,4 +1,5 @@
 ﻿using HotelListing.Models;
+using HotelListing.Properties;
 using HotelListing.Services;
 using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> GetCountries([FromQuery] RequestParams requestParams)
         {
             var results = await _countryRepository.GetCountries(requestParams);
-            return Ok(results);
+            return Ok(new Repsonse(Resource.GET_SUCCESS, requestParams, results));
         }
 
         [HttpGet]
@@ -38,7 +39,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> GetCountry([FromQuery] int id)
         {
             var result = await _countryRepository.GetCountry(id);
-            return Ok(result);
+            return Ok(new Repsonse(Resource.GET_SUCCESS, new {id = id}, result));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -49,7 +50,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> CreateCountry([FromBody] CreateCountryDTO countryDTO)
         {
             var result = await _countryRepository.CreateCountry(countryDTO);
-            return Ok(result);
+            return Ok(new Repsonse(Resource.CREATE_SUCCESS, null, result));
         }
 
         [Authorize]
@@ -60,7 +61,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> UpdateCountry(int id, [FromBody] UpdateCountryDTO countryDTO)
         {
             var result = await _countryRepository.UpdateCountry(id, countryDTO);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
 
         [Authorize]
@@ -71,7 +72,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> DeleteCountry(int id)
         {
             var result = await _countryRepository.DeleteCountry(id);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
     }
 }

@@ -148,7 +148,7 @@
     <value>Lấy dữ liệu thành công.</value>
   </data>
   <data name="LOGIN_FAIL" xml:space="preserve">
-    <value>Đăng nhập thất bại.</value>
+    <value>Tài khoản hoặc mật khẩu không chính xác.</value>
   </data>
   <data name="LOGIN_SUCCESS" xml:space="preserve">
     <value>Đăng nhập thành công.</value>
@@ -161,6 +161,9 @@
   </data>
   <data name="NOT_ACCOUNT" xml:space="preserve">
     <value>Tài khoản không tồn tại.</value>
+  </data>
+  <data name="NOT_DATA" xml:space="preserve">
+    <value>Dữ liệu không tồn tại.</value>
   </data>
   <data name="NOT_TOKEN" xml:space="preserve">
     <value>Không có mã toke.</value>
@@ -182,5 +185,20 @@
   </data>
   <data name="UPDATE_SUCCESS" xml:space="preserve">
     <value>Sửa thành công.</value>
+  </data>
+  <data name="VALIDATION_COMPARE" xml:space="preserve">
+    <value>{0} phải giống nhau.</value>
+  </data>
+  <data name="VALIDATION_DISPLAY" xml:space="preserve">
+    <value>{0} không đúng định dạng</value>
+  </data>
+  <data name="VALIDATION_MAX_LENGTH" xml:space="preserve">
+    <value>{0} không được vượt quá {1} ký tự.</value>
+  </data>
+  <data name="VALIDATION_MIN_LENGTH" xml:space="preserve">
+    <value>{0} không được it hơn {1} ký tự.</value>
+  </data>
+  <data name="VALIDATION_NOT_EMPTY" xml:space="preserve">
+    <value>{0} không được để trống.</value>
   </data>
 </root>
