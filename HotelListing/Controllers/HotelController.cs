@@ -1,4 +1,5 @@
 ﻿using HotelListing.Models;
+using HotelListing.Properties;
 using HotelListing.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> GetHotels([FromQuery] RequestParams requestParams)
         {
             var results = await _hotelRepository.GetHotels(requestParams);
-            return Ok(results);
+            return Ok(new Repsonse(Resource.GET_SUCCESS, requestParams, results));
         }
 
         [HttpGet("{id:int}", Name = "GetHotel")]
@@ -33,7 +34,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> GetHotel(int id)
         {
             var result = await _hotelRepository.GetHotel(id);
-            return Ok(result);
+            return Ok(new Repsonse(Resource.GET_SUCCESS, new { id = id }, result));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -44,7 +45,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> CreateHotel([FromBody] CreateHotelDTO hotelDTO)
         {
             var result = await _hotelRepository.CreateHotel(hotelDTO);
-            return Ok(result);
+            return Ok(new Repsonse(Resource.CREATE_SUCCESS, null, result));
         }
 
         [Authorize]
@@ -55,7 +56,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> UpdateHotel([FromQuery] int id, [FromBody] UpdateHotelDTO hotelDTO)
         {
             var result = await _hotelRepository.UpdateHotel(id, hotelDTO);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
 
         [Authorize]
@@ -66,7 +67,7 @@ namespace HotelListing.Controllers
         public async Task<IActionResult> DeleteHotel([FromQuery] int id)
         {
             var result = await _hotelRepository.DeleteHotel(id);
-            return Ok(result);
+            return Ok(new Repsonse(result));
         }
     }
 }

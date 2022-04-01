@@ -124,6 +124,24 @@ namespace HotelListing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Đặt lại mật khẩu.
+        /// </summary>
+        public static string FORGOT_PASSWORD {
+            get {
+                return ResourceManager.GetString("FORGOT_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string FORGOT_PASSWORD_BODY {
+            get {
+                return ResourceManager.GetString("FORGOT_PASSWORD_BODY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vào mail để lấy link đổi mật khẩu..
         /// </summary>
         public static string FORGOT_PASSWORD_SUCCESS {
@@ -151,7 +169,7 @@ namespace HotelListing.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Đăng nhập thất bại..
+        ///   Looks up a localized string similar to Tài khoản hoặc mật khẩu không chính xác..
         /// </summary>
         public static string LOGIN_FAIL {
             get {
@@ -192,6 +210,15 @@ namespace HotelListing.Properties {
         public static string NOT_ACCOUNT {
             get {
                 return ResourceManager.GetString("NOT_ACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dữ liệu không tồn tại..
+        /// </summary>
+        public static string NOT_DATA {
+            get {
+                return ResourceManager.GetString("NOT_DATA", resourceCulture);
             }
         }
         
@@ -241,6 +268,24 @@ namespace HotelListing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xác nhận địa chỉ email.
+        /// </summary>
+        public static string SEND_MAIL_CONFIRMED {
+            get {
+                return ResourceManager.GetString("SEND_MAIL_CONFIRMED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hãy xác nhận địa chỉ email bằng cách &lt;a href=&apos;{0}&apos;&gt;Bấm vào đây&lt;/a&gt;..
+        /// </summary>
+        public static string SEND_MAIL_CONFIRMED_BODY {
+            get {
+                return ResourceManager.GetString("SEND_MAIL_CONFIRMED_BODY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sửa thất bại..
         /// </summary>
         public static string UPDATE_FAIL {
@@ -255,6 +300,51 @@ namespace HotelListing.Properties {
         public static string UPDATE_SUCCESS {
             get {
                 return ResourceManager.GetString("UPDATE_SUCCESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} phải giống nhau..
+        /// </summary>
+        public static string VALIDATION_COMPARE {
+            get {
+                return ResourceManager.GetString("VALIDATION_COMPARE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} không đúng định dạng.
+        /// </summary>
+        public static string VALIDATION_DISPLAY {
+            get {
+                return ResourceManager.GetString("VALIDATION_DISPLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} không được vượt quá {1} ký tự..
+        /// </summary>
+        public static string VALIDATION_MAX_LENGTH {
+            get {
+                return ResourceManager.GetString("VALIDATION_MAX_LENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} không được it hơn {1} ký tự..
+        /// </summary>
+        public static string VALIDATION_MIN_LENGTH {
+            get {
+                return ResourceManager.GetString("VALIDATION_MIN_LENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} không được để trống..
+        /// </summary>
+        public static string VALIDATION_NOT_EMPTY {
+            get {
+                return ResourceManager.GetString("VALIDATION_NOT_EMPTY", resourceCulture);
             }
         }
     }

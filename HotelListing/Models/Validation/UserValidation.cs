@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using HotelListing.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace HotelListing.Models.Validation
     {
         public UserValidation()
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage("Email không được để trống.")
-                .EmailAddress().WithMessage("Email sai định dạng.");
-            RuleFor(x => x.Password).NotEmpty().WithMessage("Mật khẩu không được để trống.");
+            RuleFor(x => x.Email).NotEmpty().WithMessage(string.Format(Resource.VALIDATION_NOT_EMPTY, "Email"))
+                .EmailAddress().WithMessage(string.Format(Resource.VALIDATION_DISPLAY, "Email"));
+            RuleFor(x => x.Password).NotEmpty().WithMessage(string.Format(Resource.VALIDATION_NOT_EMPTY, "Password"));
         }
     }
 
@@ -20,15 +21,15 @@ namespace HotelListing.Models.Validation
     {
         public ResetPasswordValidation()
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage("Email không được để trống.")
-                .EmailAddress().WithMessage("Email sai định dạng.");
-            RuleFor(x => x.Password).NotEmpty().WithMessage("Mật khẩu không được để trống.")
-                .Length<ResetPassword>(6, 200).WithMessage("Mật khẩu lớn hơn 6 và nhỏ hơn 200 ký tự.");
+            RuleFor(x => x.Email).NotEmpty().WithMessage(string.Format(Resource.VALIDATION_NOT_EMPTY, "Email"))
+                .EmailAddress().WithMessage(string.Format(Resource.VALIDATION_DISPLAY, "Email"));
+            RuleFor(x => x.Password).NotEmpty().WithMessage(string.Format(Resource.VALIDATION_NOT_EMPTY, "Password"))
+                .MaximumLength(200).WithMessage(string.Format(Resource.VALIDATION_MAX_LENGTH, "Password", "200"));
             RuleFor(x => x).Custom((request, context) =>
             {
                 if(request.Password != request.ConfirmPassword)
                 {
-                    context.AddFailure("Mật khẩu chưa khớp.");
+                    context.AddFailure(string.Format(Resource.VALIDATION_COMPARE, "Password"));
                 }
             });
         }

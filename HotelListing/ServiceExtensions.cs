@@ -64,7 +64,7 @@ namespace HotelListing
             {
                 error.Run(async context =>
                 {
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     context.Response.ContentType = "application/json";
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
@@ -74,7 +74,7 @@ namespace HotelListing
                         await context.Response.WriteAsync(new Error
                         {
                             StatusCode = context.Response.StatusCode,
-                            Message = "Internal Server Error. Please Try Again Later."
+                            Message = contextFeature.Error.Message
                         }.ToString());
                     }
                 });
@@ -132,8 +132,8 @@ namespace HotelListing
         {
             services.AddTransient<IValidator<UserDTO>, UserValidation>();
             services.AddTransient<IValidator<ResetPassword>, ResetPasswordValidation>();
-            services.AddTransient<IValidator<HotelDTO>, HotelValidation>();
-            services.AddTransient<IValidator<CountryDTO>, CountryValidation>();
+            services.AddTransient<IValidator<CreateHotelDTO>, CreateHotelValidation>();
+            services.AddTransient<IValidator<CreateCountryDTO>, CountryValidation>();
         }
     }
 }
